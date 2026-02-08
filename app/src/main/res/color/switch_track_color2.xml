@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Farbe, wenn der Schalter aktiviert ist -->
+    <item android:state_checked="true" android:color="#EDCE88" />
+    <!-- Farbe, wenn der Schalter deaktiviert ist -->
+    <item android:color="#FFE0B2" />
+</selector>
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/gradient_background"> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@android:drawable/ic_lock_idle_alarm"
+        app:tint="@android:color/white"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/text_view_alarm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AB IN DIE SCHULE!"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:letterSpacing="0.1"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/text_view_alarm_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="07:30"
+        android:textColor="@color/white"
+        android:textSize="110sp"
+        android:includeFontPadding="false"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:layout_marginBottom="60dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_dismiss_alarm"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="280dp"
+        android:layout_height="75dp"
+        android:text="AUSSCHALTEN"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:cornerRadius="38dp"
+        app:backgroundTint="#FFA807"
+        android:textColor="@color/white"
+        android:layout_marginBottom="20dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_snooze_alarm"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="280dp"
+        android:layout_height="60dp"
+        android:text="Schlummern"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="2dp"
+        app:cornerRadius="30dp"
+        app:rippleColor="#40FFFFFF"/>
+
+</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

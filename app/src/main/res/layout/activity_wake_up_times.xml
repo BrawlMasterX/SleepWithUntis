@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF3E0">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_early"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFF3E0"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/ic_back_custom"
+        app:title="Weck-Einstellungen"
+        app:titleTextColor="#BF360C" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switch_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stundenabhängige Weckzeiten  "
+                android:textColor="#BF360C"
+                android:textStyle="bold"
+                app:thumbTint="@color/switch_thumb_color2"
+                app:trackTint="@color/switch_track_color2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layout_state_minutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                app:layout_constraintTop_toBottomOf="@id/switch_mode"
+                android:layout_marginTop="24dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="32dp"
+                    app:cardElevation="1dp"
+                    app:strokeWidth="2dp"
+                    app:strokeColor="#FFCCBC"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:background="#FFFBF9"> <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WECKER-VORLAUF"
+                        android:letterSpacing="0.1"
+                        android:textColor="#BF360C"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/icon_clock_fancy"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/ic_clock"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="16dp"
+                                app:tint="#FF6033" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="120dp"
+                                android:layout_height="wrap_content"
+                                android:layout_toEndOf="@id/icon_clock_fancy"
+                                app:boxCornerRadiusBottomEnd="16dp"
+                                app:boxCornerRadiusBottomStart="16dp"
+                                app:boxCornerRadiusTopEnd="16dp"
+                                app:boxCornerRadiusTopStart="16dp"
+                                app:boxStrokeColor="#FF6033"
+                                app:boxStrokeWidth="2dp"
+                                app:hintEnabled="false">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_global_minutes"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="number"
+                                    android:maxLength="3"
+                                    android:text="30"
+                                    android:textAlignment="center"
+                                    android:textColor="#BF360C"
+                                    android:textSize="32sp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:padding="8dp" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toEndOf="@id/icon_clock_fancy"
+                                android:layout_alignBottom="@id/icon_clock_fancy"
+                                android:text="min"
+                                android:layout_marginLeft="125dp"
+                                android:textColor="#FF6033"
+                                android:textStyle="bold"
+                                android:textSize="18sp" />
+
+                        </RelativeLayout>
+
+                        <View
+                            android:layout_width="60dp"
+                            android:layout_height="4dp"
+                            android:layout_marginTop="20dp"
+                            android:background="#FFCCBC"
+                            android:backgroundTint="#FFCCBC" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Gib an, wie viele Minuten vor der Schule dein Wecker klingeln soll."
+                            android:textAlignment="center"
+                            android:textColor="#8D6E63"
+                            android:textSize="14sp"
+                            android:paddingHorizontal="10dp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_state_hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/switch_mode"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Trage die Weckzeit pro Schulstunde ein!"
+                    android:textAlignment="center"
+                    android:textColor="#BF360C"
+                    android:textSize="17sp"
+                    android:lineSpacingExtra="4dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="24dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="#FFCCBC"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:id="@+id/container_hours_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="8dp"
+                            android:paddingHorizontal="8dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Stunde" android:textColor="#8D6E63" android:textStyle="bold" />
+                            <TextView android:layout_width="100dp" android:layout_height="wrap_content" android:text="Uhrzeit" android:textAlignment="center" android:textColor="#8D6E63" android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="1. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_1" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="2. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_2" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="3. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_3" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="4. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_4" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="5. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_5" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="6. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_6" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="7. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_7" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#FBE9E7" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:padding="12dp">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="8. Stunde" android:textColor="#BF360C" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_weckzeit_8" android:layout_width="100dp" android:layout_height="wrap_content" android:text="00:00" android:textAlignment="center" android:textColor="#FF6033" android:textSize="18sp" android:textStyle="bold" android:clickable="true" android:focusable="true"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>

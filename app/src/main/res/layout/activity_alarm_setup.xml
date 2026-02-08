@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF3E0">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_alarm_setup"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFF3E0"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/ic_back_custom"
+        app:title="Alarm Setup"
+        app:titleTextColor="@color/black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="1dp"
+            app:strokeColor="#FFCCBC"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Schlummer-Dauer (Minuten)"
+                    android:textColor="#BF360C"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_snooze"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="1"
+                    android:valueTo="30"
+                    android:stepSize="1"
+                    app:thumbColor="#FF6033"
+                    app:trackColorActive="#FF6033"
+                    app:trackColorInactive="#FFCCBC" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp">
+            <ImageButton
+                android:id="@+id/btn_reset_audio"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:elevation="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_select_mp3"
+                app:layout_constraintEnd_toEndOf="@+id/btn_select_mp3"
+                app:layout_constraintTop_toTopOf="@+id/btn_select_mp3"
+                app:tint="#FFFFFF" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_select_mp3"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:text="Klingelton wählen"
+                android:textColor="@color/white"
+                android:paddingEnd="64dp"
+                app:backgroundTint="#FF6033"
+                app:cornerRadius="16dp"
+                app:icon="@android:drawable/ic_menu_save"
+                app:iconPadding="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/tv_current_filename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Aktuell: Standard-Ton"
+                android:textColor="#757575"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_select_mp3" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_test_audio"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:text="Alarm-Ton testen"
+            android:textColor="#FF6033"
+            app:strokeColor="#FF6033"
+            app:cornerRadius="16dp"
+            app:icon="@android:drawable/ic_lock_silent_mode_off"
+            app:iconTint="#FF6033" />
+
+    </LinearLayout>
+</LinearLayout>
