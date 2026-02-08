@@ -52,6 +52,16 @@ This app utilizes the following resources:
 
 ---
 
+## Development Journey & Status
+This is my very first Android application. The project started using a Python-based API but was later migrated to the **WebUntisAPI (Kotlin)** to implement the school search feature.
+
+As this is a learning project:
+* **Current Status:** Technical Alpha / Proof of Concept.
+* **Development:** Built with a mix of manual coding, documentation research, and AI assistance.
+* **Known Issues:** Since I am still learning Kotlin and Android development, there might be redundant code or minor bugs. I am continuously working on cleaning up the codebase and optimizing performance.
+
+---
+
 ## ⚠️ Disclaimer
 This is an unofficial application and is not affiliated with, authorized, or endorsed by Untis GmbH. Use of this app is at your own risk. The developer is not responsible for any missed classes or appointments due to technical failures.
 
