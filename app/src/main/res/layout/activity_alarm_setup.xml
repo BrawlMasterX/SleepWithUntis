@@ -14,7 +14,7 @@
         android:elevation="4dp"
         app:navigationIcon="@drawable/ic_back_custom"
         app:title="Alarm Setup"
-        app:titleTextColor="@color/black" />
+        app:titleTextColor="#BF360C" />
 
     <LinearLayout
         android:layout_width="match_parent"

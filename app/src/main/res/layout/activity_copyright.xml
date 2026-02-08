@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF3E0">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_credits"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FFF3E0"
+        android:elevation="4dp"
+        app:navigationIcon="@drawable/ic_back_custom"
+        app:title="Copyrights &amp; Credits"
+        app:titleTextColor="#BF360C" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="© 2026 BrawlMasterX\nAll Rights Reserved"
+                android:textColor="#BF360C"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="This software is provided for personal and educational use only. Unauthorized redistribution or commercial use is strictly prohibited."
+                android:textColor="#5D4037"
+                android:textSize="14sp" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="16dp"
+                android:background="#D7CCC8" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Third-Party Resources"
+                android:textColor="#BF360C"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/credits_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:textColor="#5D4037"
+                android:textColorLink="#FF6033"
+                android:lineSpacingExtra="4dp"
+                android:text="API: WebUntisAPI by Keule0010\nhttps://github.com/Keule0010/WebUntisAPI\n\nIcons: SVG Repo (CC0 License)\nhttps://www.svgrepo.com/svg/22031/home-icon-silhouette\nhttps://www.svgrepo.com/svg/376074/go-back\nhttps://www.svgrepo.com/svg/535304/clock\n\nAlarm Sound: Royalty-Free Library" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Disclaimer: This app is unofficial and not affiliated with Untis GmbH. Use at your own risk."
+                android:textColor="#795548"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

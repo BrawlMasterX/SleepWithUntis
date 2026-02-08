@@ -36,6 +36,8 @@ class SettingsActivity : AppCompatActivity() {
         val cardLoginData = findViewById<MaterialCardView>(R.id.card_login_data)
         val cardEarlyMinutes = findViewById<MaterialCardView>(R.id.card_early_minutes)
         val cardAlarmSetup = findViewById<MaterialCardView>(R.id.card_alarm_setup)
+        val cardCopyright = findViewById<MaterialCardView>(R.id.card_copyright)
+
 
         // Navigationen
         cardLoginData.setOnClickListener {
@@ -51,5 +53,9 @@ class SettingsActivity : AppCompatActivity() {
         cardAlarmSetup.setOnClickListener {
             startActivity(Intent(this, AlarmSetupActivity::class.java))
         }
+        cardCopyright.setOnClickListener {
+            startActivity(Intent(this, CopyrightActivity::class.java))
+        }
+
     }
 }
