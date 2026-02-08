@@ -37,7 +37,7 @@ For inquiries or permission requests, please contact me on github.
 
     I have made specific adjustments to the original WebUntisAPI to ensure compatibility with the Android environment:
 
-    * **JSON Parameter Fix:** Modified the `njson` calls by removing the second `null` parameter. This was necessary because the standard Android JSON implementation only accepts a single parameter, and the extra null caused a signature mismatch.
+    * **JSON Parameter Fix:** Modified the `json` calls by removing the second `null` parameter. This was necessary because the standard Android JSON implementation only accepts a single parameter, and the extra null caused a signature mismatch.
     * **Exception Handling:** Added explicit `Exception` handling and `throws` declarations to the core methods to ensure the app compiles correctly under Android's strict error-handling requirements.
 
 ## 🙏 Credits & Third-Party Resources
