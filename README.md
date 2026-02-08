@@ -1,6 +1,6 @@
 # SleepWithUntis
 
-A alarmclock that wakes you up automatically based on your WebUntis schedule.
+An alarmclock that wakes you up automatically based on your WebUntis schedule.
 
 ---
 
