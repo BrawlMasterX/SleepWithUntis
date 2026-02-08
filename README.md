@@ -68,5 +68,3 @@ As this is a learning project:
 
 ## ⚠️ Disclaimer
 This is an unofficial application and is not affiliated with, authorized, or endorsed by Untis GmbH. Use of this app is at your own risk. The developer is not responsible for any missed classes or appointments due to technical failures.
-
----
