@@ -30,7 +30,7 @@ For inquiries or permission requests, please contact me on github.
 * **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
 
 ## 🛠️ Tech Stack
-* **Language:** Kotlin
+* **Language:** Kotlin/Java
 * **Platform:** Android
 * **API Connection:** [WebUntisAPI by Keule0010](https://github.com/Keule0010/WebUntisAPI)
 
