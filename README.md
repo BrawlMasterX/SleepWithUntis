@@ -24,8 +24,6 @@ For inquiries or permission requests, please contact me on github.
 
 ---
 
----
-
 ## ✨ Features
 * **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
