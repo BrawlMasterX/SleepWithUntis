@@ -29,6 +29,8 @@ For inquiries or permission requests, please contact me on github.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
 * **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
 
+---
+
 ## 🛠️ Tech Stack
 * **Language:** Kotlin/Java
 * **Platform:** Android
@@ -39,6 +41,8 @@ For inquiries or permission requests, please contact me on github.
 
     * **JSON Parameter Fix:** Modified the `json` calls by removing the second `null` parameter. This was necessary because the standard Android JSON implementation only accepts a single parameter, and the extra null caused a signature mismatch.
     * **Exception Handling:** Added explicit `Exception` handling and `throws` declarations to the core methods to ensure the app compiles correctly under Android's strict error-handling requirements.
+
+---
 
 ## 🙏 Credits & Third-Party Resources
 This app utilizes the following resources:
