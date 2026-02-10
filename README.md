@@ -28,7 +28,7 @@ For inquiries or permission requests, please contact me on github.
 * **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
 * **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
-* I have a function in the updateWorker which triggers an openhab LightAlarm. If you have something like this already and don't want to loose it you can add that there. If you don#t know how just ask AI.
+* I have a function in the updateWorker which triggers an openhab LightAlarm. If you have something like this already and don't want to loose it you can add that there. If you don't know how just ask AI.
 
 ---
 
