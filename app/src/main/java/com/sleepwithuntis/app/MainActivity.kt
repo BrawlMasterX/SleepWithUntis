@@ -117,13 +117,13 @@ class MainActivity : AppCompatActivity() {
 
                 // 1. Versuch für das aktuelle Datum
             var targetTime = calculator.getAlarmTime(heute)
-            var firstHourTime = targetTime?.let { LocalTime.of(0, 0) }
+            var firstHourTime = targetTime?.let { LocalTime.of(10, 0) }
 
             if (targetTime?.get(0) != -1) {
                 firstHourTime = targetTime?.let { LocalTime.of(it[0], targetTime[1]) }
             }
 
-            if (targetTime?.get(0) == -1 || jetzt.isAfter(firstHourTime)) {
+            if (jetzt.isAfter(firstHourTime)) {
                 getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE).edit().apply {
                     putBoolean("last_set_time", true)
                     apply()
