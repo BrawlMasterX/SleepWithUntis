@@ -1,6 +1,6 @@
 # SleepWithUntis
 
-A alarmclock that wakes you up automatically based on your WebUntis schedule.
+An Android alarmclock app that wakes you up automatically based on your WebUntis schedule.
 
 ---
 
@@ -28,6 +28,7 @@ For inquiries or permission requests, please contact me on github.
 * **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
 * **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
+* **SmartHome:** I have a function in the updateWorker which triggers an openhab LightAlarm. If you have something like this already and don't want to loose it you can add that there. If you don't know how just ask AI.
 
 ---
 
@@ -62,6 +63,7 @@ This is my very first Android application. The project started using a Python-ba
 As this is a learning project:
 * **Current Status:** Technical Alpha / Proof of Concept.
 * **Development:** Built with a mix of manual coding, documentation research, and AI assistance.
+* **Design:** I've just made the things i've nedded like buttons. Then send all .xml files to gemini, which made this clean design.
 * **Known Issues:** Since I am still learning Kotlin and Android development, there might be redundant code or minor bugs. I am continuously working on cleaning up the codebase and optimizing performance.
 
 ---
