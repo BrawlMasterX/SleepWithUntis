@@ -14,11 +14,9 @@ This software and its source code are provided for educational and personal use 
 
 Restrictions:
 
-    You may not sell this software or use it for commercial purposes.
-
-    You may not republish the source code or the application under your own name.
-
-    You are welcome to study the code and adapt it for private, non-commercial use only.
+* You may not sell this software or use it for commercial purposes.
+* You may not republish the source code or the application under your own name.
+* You are welcome to study the code and adapt it for private, non-commercial use only.
 
 For inquiries or permission requests, please contact me on github.
 
