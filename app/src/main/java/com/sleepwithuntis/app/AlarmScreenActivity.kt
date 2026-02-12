@@ -1,6 +1,7 @@
 package com.sleepwithuntis.app
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -44,6 +45,7 @@ class AlarmScreenActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.dialog_alarm_screen)
+        triggerTaskerAlarm()
 
         // Ton starten (berücksichtigt jetzt Reset und neue Formate)
         startAlarmSound()
@@ -149,9 +151,21 @@ class AlarmScreenActivity : AppCompatActivity() {
         stopAlarmSound()
         super.onDestroy()
     }
+    private fun triggerTaskerAlarm() {
+        Thread {
+            try {
+                val intent = Intent("com.sleepwithuntis.app.ACTION_ALARM_NOW").apply {
+                    //schränken es auf Tasker ein
+                    setPackage("net.dinglisch.android.taskerm")
+                }
+                applicationContext.sendBroadcast(intent)
+            } catch (e: Exception) { e.printStackTrace() }
+        }.start()
+    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        super.onBackPressed()
         // Verhindert das Schließen über die Zurück-Taste (Nutzer muss Snooze oder Dismiss drücken)
     }
 }

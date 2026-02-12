@@ -75,6 +75,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                     // 1. Alles wie geplant
                     if (heuteWoche != DayOfWeek.SATURDAY && heuteWoche != DayOfWeek.SUNDAY && targetHour != -1) {
                         hueLightTrigger()
+                        triggerTaskerBefore()
                         AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
                     }
                 } else if (newWakeCal.before(now)) {
@@ -99,6 +100,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             if (!isInitialScan && heuteWoche != DayOfWeek.SATURDAY && heuteWoche != DayOfWeek.SUNDAY) {
                 // Nur im Notfall wecken, wenn wir uns bereits im 5-Min-Check befinden
                 hueLightTrigger()
+                triggerTaskerBefore()
                 AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
             }
             return Result.failure()
@@ -190,6 +192,17 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 conn.setRequestProperty("Content-Type", "text/plain")
                 conn.outputStream.use { it.write("ON".toByteArray()) }
                 conn.responseCode
+            } catch (e: Exception) { e.printStackTrace() }
+        }.start()
+    }
+    private fun triggerTaskerBefore() {
+        Thread {
+            try {
+                val intent = Intent("com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE").apply {
+                    // Wir schränken es auf Tasker ein, damit das System effizient bleibt
+                    setPackage("net.dinglisch.android.taskerm")
+                }
+                applicationContext.sendBroadcast(intent)
             } catch (e: Exception) { e.printStackTrace() }
         }.start()
     }
