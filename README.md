@@ -45,7 +45,7 @@ For inquiries or permission requests, please contact me on github.
 
 ---
 
-##💡 Integrating Tasker with SleepWithUntis
+## 💡 Integrating Tasker with SleepWithUntis
 This app sends two different broadcast intents that Tasker can listen for. This allows you to automate your smart home or device settings perfectly synchronized with your school schedule.
 
 **Prerequisites**
