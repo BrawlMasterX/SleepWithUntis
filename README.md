@@ -28,12 +28,12 @@ For inquiries or permission requests, please contact me on github.
 * **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
 * **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
-* **SmartHome:** I have a function in the updateWorker which triggers an openhab LightAlarm. If you have something like this already and don't want to loose it you can add that there. If you don't know how just ask AI.
+* **SmartHome/Tasker:** I have a function in the updateWorker which triggers an openhab LightAlarm. You can edit it or use tasker which is easier
 
 ---
 
 ## 🛠️ Tech Stack
-* **Language:** Kotlin/Java
+* **Language:** Kotlin for App / Java for API
 * **Platform:** Android
 * **API Connection:** [WebUntisAPI by Keule0010](https://github.com/Keule0010/WebUntisAPI) I've edited
   * ## Technical Modifications
@@ -42,6 +42,23 @@ For inquiries or permission requests, please contact me on github.
 
     * **JSON Parameter Fix:** Modified the `json` calls by removing the second `null` parameter. This was necessary because the standard Android JSON implementation only accepts a single parameter, and the extra null caused a signature mismatch.
     * **Exception Handling:** Added explicit `Exception` handling and `throws` declarations to the core methods to ensure the app compiles correctly under Android's strict error-handling requirements.
+
+---
+
+##💡 Integrating Tasker with SleepWithUntis
+This app sends two different broadcast intents that Tasker can listen for. This allows you to automate your smart home or device settings perfectly synchronized with your school schedule.
+
+**Prerequisites**
+* Open Tasker.
+* Tap the three dots (top right) → Preferences.
+* Go to the Misc tab.
+* Enable "Allow External Access".
+
+**Available Triggers**
+* **Profile:** Tap + → Event → System → Intent Received
+* **Action:** com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE    for 5 Minutes before alarm
+* **Action:** com.sleepwithuntis.app.ACTION_ALARM_NOW    for when the alarm rings
+* **Task:** Create a task with actions to run exactly when the alarm goes off.
 
 ---
 
