@@ -56,8 +56,10 @@ This app sends two different broadcast intents that Tasker can listen for. This 
 
 **Available Triggers**
 * **Profile:** Tap + → Event → System → Intent Received
-* **Action:** com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE    for 5 Minutes before alarm
-* **Action:** com.sleepwithuntis.app.ACTION_ALARM_NOW    for when the alarm rings
+* **Action:** com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE
+    * 5 Minutes before alarm
+* **Action:** com.sleepwithuntis.app.ACTION_ALARM_NOW
+    * when the alarm rings
 * **Task:** Create a task with actions to run exactly when the alarm goes off.
 
 ---
