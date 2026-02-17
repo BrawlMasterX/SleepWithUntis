@@ -25,8 +25,7 @@ For inquiries or permission requests, please contact me on github.
 ## ✨ Features
 * **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
-* **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
-* **SmartHome/Tasker:** I have a function in the updateWorker which triggers an openhab LightAlarm. You can edit it or use tasker which is easier
+* **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers or day dependend wake up times).
 
 ---
 
