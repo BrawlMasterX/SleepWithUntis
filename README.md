@@ -14,11 +14,9 @@ This software and its source code are provided for educational and personal use 
 
 Restrictions:
 
-    You may not sell this software or use it for commercial purposes.
-
-    You may not republish the source code or the application under your own name.
-
-    You are welcome to study the code and adapt it for private, non-commercial use only.
+* You may not sell this software or use it for commercial purposes.
+* You may not republish the source code or the application under your own name.
+* You are welcome to study the code and adapt it for private, non-commercial use only.
 
 For inquiries or permission requests, please contact me on github.
 
@@ -27,13 +25,12 @@ For inquiries or permission requests, please contact me on github.
 ## ✨ Features
 * **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
 * **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
-* **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers).
-* **SmartHome:** I have a function in the updateWorker which triggers an openhab LightAlarm. If you have something like this already and don't want to loose it you can add that there. If you don't know how just ask AI.
+* **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers or day dependend wake up times).
 
 ---
 
 ## 🛠️ Tech Stack
-* **Language:** Kotlin/Java
+* **Language:** Kotlin for App / Java for API
 * **Platform:** Android
 * **API Connection:** [WebUntisAPI by Keule0010](https://github.com/Keule0010/WebUntisAPI) I've edited
   * ## Technical Modifications
@@ -42,6 +39,25 @@ For inquiries or permission requests, please contact me on github.
 
     * **JSON Parameter Fix:** Modified the `json` calls by removing the second `null` parameter. This was necessary because the standard Android JSON implementation only accepts a single parameter, and the extra null caused a signature mismatch.
     * **Exception Handling:** Added explicit `Exception` handling and `throws` declarations to the core methods to ensure the app compiles correctly under Android's strict error-handling requirements.
+
+---
+
+## 💡 Integrating Tasker with SleepWithUntis
+This app sends two different broadcast intents that Tasker can listen for. This allows you to automate your smart home or device settings perfectly synchronized with your school schedule.
+
+**Prerequisites**
+* Open Tasker.
+* Tap the three dots (top right) → Preferences.
+* Go to the Misc tab.
+* Enable "Allow External Access".
+
+**Available Triggers**
+* **Profile:** Tap + → Event → System → Intent Received
+* **Action:** com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE
+    * 5-minute lead-up
+* **Action:** com.sleepwithuntis.app.ACTION_ALARM_NOW
+    * Upon alarm trigger
+* **Task:** Create a task with actions to run exactly when the alarm goes off (roller shutters) or 5 minutes earlier (Lightalarm).
 
 ---
 
