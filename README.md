@@ -57,7 +57,7 @@ This app sends two different broadcast intents that Tasker can listen for. This 
     * 5-minute lead-up
 * **Action:** com.sleepwithuntis.app.ACTION_ALARM_NOW
     * Upon alarm trigger
-* **Task:** Create a task with actions to run exactly when the alarm goes off.
+* **Task:** Create a task with actions to run exactly when the alarm goes off (roller shutters) or 5 minutes earlier (Lightalarm).
 
 ---
 
