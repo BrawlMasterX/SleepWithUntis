@@ -74,7 +74,6 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 if (targetHour == alteH && targetMin == alteM) {
                     // 1. Alles wie geplant
                     if (heuteWoche != DayOfWeek.SATURDAY && heuteWoche != DayOfWeek.SUNDAY && targetHour != -1) {
-                        hueLightTrigger()
                         triggerTaskerBefore()
                         AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
                     }
@@ -99,7 +98,6 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         } catch (e: Exception) {
             if (!isInitialScan && heuteWoche != DayOfWeek.SATURDAY && heuteWoche != DayOfWeek.SUNDAY) {
                 // Nur im Notfall wecken, wenn wir uns bereits im 5-Min-Check befinden
-                hueLightTrigger()
                 triggerTaskerBefore()
                 AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
             }
@@ -175,26 +173,6 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         }
     }
 
-    private fun hueLightTrigger() {
-        val userPref = applicationContext.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val u = userPref.getString("username", "")
-        val s = userPref.getString("school", "")
-        val itemName = when {
-            u == "KolNoa09_A28" && s == "egwoerth" -> "LichtweckerNoah"
-            u == "KolbFli" && s == "egwoerth" -> "LichtweckerFlinn"
-            else -> return
-        }
-        Thread {
-            try {
-                val conn = URL("http://openhab.local:8080/rest/items/$itemName").openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.doOutput = true
-                conn.setRequestProperty("Content-Type", "text/plain")
-                conn.outputStream.use { it.write("ON".toByteArray()) }
-                conn.responseCode
-            } catch (e: Exception) { e.printStackTrace() }
-        }.start()
-    }
     private fun triggerTaskerBefore() {
         Thread {
             try {
