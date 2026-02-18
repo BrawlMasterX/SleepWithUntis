@@ -33,14 +33,17 @@
                 android:textColor="#BF360C"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
+                android:id="@+id/github_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="This software is provided for personal and educational use only. Unauthorized redistribution or commercial use is strictly prohibited."
+                android:autoLink="web"
+                android:linksClickable="true"
                 android:textColor="#5D4037"
-                android:textSize="14sp" />
+                android:textColorLink="#FF6033"
+                android:lineSpacingExtra="4dp"
+                android:text= "https://github.com/BrawlMasterX/SleepWithUntis\n\nThis software is provided for personal and educational use only. Unauthorized redistribution or commercial use is strictly prohibited."/>
 
 
             <View

@@ -31,6 +31,11 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import android.os.PowerManager
 import kotlinx.coroutines.runBlocking
+import androidx.appcompat.app.AlertDialog
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import android.content.pm.PackageManager
 
 
 class MainActivity : AppCompatActivity() {
@@ -66,6 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         // 1. SCHRITT: Sofort anzeigen, was wir bereits wissen
         loadInitialDataFromPrefs()
+        checkForAppUpdates()
 
         // 2. SCHRITT: Im Hintergrund nach Updates suchen (Untis oder Offline-Fallback)
         checkForUpdate()
@@ -290,6 +296,82 @@ class MainActivity : AppCompatActivity() {
                 }
             }.start()
 
+    }
+
+    private fun checkForAppUpdates() {
+        val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getPackageInfo(packageName, 0).versionName
+        } ?: "1.0.0"
+        val url = "https://api.github.com/repos/BrawlMasterX/SleepWithUntis/releases/latest"
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // In der lifecycleScope.launch(Dispatchers.IO) Schleife:
+
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                    .url(url)
+                    .header("User-Agent", "SleepWithUntis-App") // WICHTIG: GitHub braucht das!
+                    .header("Accept", "application/vnd.github.v3+json")
+                    .build()
+
+                val response = client.newCall(request).execute()
+
+                if (response.isSuccessful) {
+                    val jsonData = response.body?.string()
+                    if (jsonData != null) {
+                        val jsonObject = JSONObject(jsonData)
+                        val latestVersion = jsonObject.getString("tag_name").replace("v", "") // Entfernt 'v' falls vorhanden
+                        val downloadUrl = jsonObject.getString("html_url")
+
+                        if (isNewerVersion(currentVersion, latestVersion)) {
+                            withContext(Dispatchers.Main) {
+                                showUpdateDialog(latestVersion, downloadUrl)
+                            }
+                        }
+                    }
+                } else {
+                    // Logge den Fehler, falls die API z.B. 404 oder 403 zurückgibt
+                    println("GitHub API Error: ${response.code}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace() // Fehler beim Check (z.B. kein Internet) einfach ignorieren
+            }
+        }
+    }
+
+    private fun isNewerVersion(current: String, latest: String): Boolean {
+        // Entferne 'v' Präfixe und splitte bei den Punkten (z.B. "1.2.3" -> ["1", "2", "3"])
+        val curParts = current.replace("v", "").split(".").map { it.toIntOrNull() ?: 0 }
+        val latParts = latest.replace("v", "").split(".").map { it.toIntOrNull() ?: 0 }
+
+        // Ermittle die Länge der längsten Versionsnummer
+        val maxLength = maxOf(curParts.size, latParts.size)
+
+        for (i in 0 until maxLength) {
+            val c = curParts.getOrElse(i) { 0 } // Falls Teil fehlt (z.B. bei "1.2"), nimm 0
+            val l = latParts.getOrElse(i) { 0 }
+
+            if (l > c) return true  // GitHub Version ist an dieser Stelle höher -> Update!
+            if (c > l) return false // Lokale Version ist höher (Entwickler-Modus) -> Kein Update
+        }
+
+        return false // Versionen sind exakt gleich
+    }
+
+    private fun showUpdateDialog(newVersion: String, url: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Update verfügbar!")
+            .setMessage("Eine neue Version ($newVersion) ist auf GitHub verfügbar. Möchtest du sie herunterladen?")
+            .setPositiveButton("Download") { _, _ ->
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            }
+            .setNegativeButton("Später", null)
+            .show()
     }
     private val overlayPermissionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
 }
