@@ -75,6 +75,8 @@ class UserLoginActivity : AppCompatActivity() {
                         if (loginErfolgreich) {
                             saveUserData()
                             Toast.makeText(this@UserLoginActivity, "Anmeldung erfolgreich!", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this@UserLoginActivity, SettingsActivity::class.java)
+                            startActivity(intent)
                             finish()
                         } else {
 
