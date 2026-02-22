@@ -13,7 +13,7 @@ An Android alarmclock app that wakes you up automatically based on your WebUntis
 
 ---
 
-| Login & Sync | Alarm Customization |
+| Login & Sync | Alarm Setup |
 | :---: | :---: |
 | <img src="https://github.com/user-attachments/assets/42e60006-3ea8-4f14-a492-c3340f676291" width="350"> | <img src="https://github.com/user-attachments/assets/c37a4489-c3e3-4e1b-8316-3351dbc0b6fb" width="350"> |
 | **Easy Access**: Simply log in with your credentials and search for your school to sync your timetable. | **Personalized Wake-up**: Adjust snooze durations or choose multiple alarm sounds—the app will pick a random one to keep your mornings fresh. |
