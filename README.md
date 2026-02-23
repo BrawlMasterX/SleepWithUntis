@@ -1,10 +1,87 @@
 # SleepWithUntis
 
-An Android alarmclock app that wakes you up automatically based on your WebUntis schedule.
+> **Choose Language / Sprache wählen:**
+> [🇩🇪 Deutsch](#-deutsch) | [🇬🇧 English](#-english)
 
 ---
 
-## ✨ Features & Preview
+<a name="-deutsch"></a>
+## 🇩🇪 Deutsch
+
+Eine Android-Wecker-App, die dich automatisch basierend auf deinem WebUntis-Stundenplan weckt.
+
+### ✨ Funktionen & Vorschau
+
+| Startbildschirm | Einstellungen |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/6a8c9bfb-749e-47bc-957b-b2a597f9252f" width="350"> | <img src="https://github.com/user-attachments/assets/806cb7d3-2313-4d2a-9bc7-c09080bef178" width="350"> |
+| **Minimalistisches Design**: Tippe auf die Weckzeit, um eine Toast-Benachrichtigung zu sehen, die dir genau zeigt, wie viel Zeit bis zum nächsten Alarm verbleibt. | **Volle Kontrolle**: Passe das App-Verhalten und deine Vorlieben schnell über das übersichtliche Einstellungsmenü an. |
+
+---
+
+| Login & Synchronisation | Alarm-Einrichtung |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/42e60006-3ea8-4f14-a492-c3340f676291" width="350"> | <img src="https://github.com/user-attachments/assets/c37a4489-c3e3-4e1b-8316-3351dbc0b6fb" width="350"> |
+| **Einfacher Zugriff**: Melde dich einfach mit deinen Zugangsdaten an und suche nach deiner Schule, um deinen Stundenplan zu synchronisieren. | **Personalisierter Weckruf**: Passe die Schlummerdauer an oder wähle mehrere Alarmtöne – die App wählt zufällig einen aus, um deine Morgenroutine frisch zu halten. |
+
+---
+
+### Flexible Weck-Modi
+
+Wechsle zwischen einer allgemeinen Vorbereitungszeit oder spezifischen Zeiten für jede Unterrichtsstunde über den Schalter oben rechts.
+
+| Vorbereitung (Early Minutes) | Individuelle Stundenzeiten |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/4ffa48a7-5bc1-4774-8eb8-c27771d683d7" width="350"> | <img src="https://github.com/user-attachments/assets/a8ef6992-f1af-4014-a498-3fc24e379429" width="350"> |
+| Lege eine feste Anzahl an "Vorlaufminuten" fest, die du vor Beginn deiner ersten Schulstunde benötigst. | Definiere für jede einzelne Schulstunde eine eigene Weckzeit für maximale Präzision. |
+
+---
+
+### 🛠️ Tech Stack
+* **Sprache:** Kotlin für die App / Java für die API
+* **Plattform:** Android
+* **API-Anbindung:** [WebUntisAPI von Keule0010](https://github.com/Keule0010/WebUntisAPI) (von mir modifiziert)
+
+#### Technische Modifikationen
+Ich habe spezifische Anpassungen an der originalen WebUntisAPI vorgenommen, um die Kompatibilität mit Android sicherzustellen:
+* **JSON-Parameter Fix:** Die `json`-Aufrufe wurden korrigiert (Entfernung des zweiten `null`-Parameters), da die Android-Standard-JSON-Implementierung sonst Signatur-Fehler verursachte.
+* **Fehlerbehandlung:** Explizite `Exception`-Handhabung und `throws`-Deklarationen zu den Kernmethoden hinzugefügt.
+
+---
+
+### 💡 Tasker-Integration
+Diese App sendet zwei verschiedene Broadcast-Intents, die Tasker empfangen kann. Dies ermöglicht es dir, dein Smart Home oder deine Geräteeinstellungen perfekt synchron zum Stundenplan zu automatisieren.
+
+**Voraussetzungen in Tasker:**
+* Drei Punkte (oben rechts) → Einstellungen.
+* Reiter "Diverse".
+* "Externen Zugriff erlauben" aktivieren.
+
+**Verfügbare Trigger:**
+* **Profil:** Ereignis → System → Intent Empfangen
+* **Aktion:** `com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE` (5 Minuten Vorlauf, z. B. für Lichtwecker)
+* **Aktion:** `com.sleepwithuntis.app.ACTION_ALARM_NOW` (Beim Auslösen des Alarms, z. B. für Rolläden)
+
+---
+
+### 📜 Urheberrecht & Lizenz
+Copyright (c) 2026 BrawlMasterX. Alle Rechte vorbehalten.
+Diese Software und ihr Quellcode werden nur für Bildungszwecke und den persönlichen Gebrauch zur Verfügung gestellt. Das unbefugte Kopieren, Modifizieren oder Veröffentlichen (insbesondere das Hochladen in den Google Play Store) ist ohne vorherige schriftliche Genehmigung des Autors strengstens untersagt.
+
+---
+
+### ⚠️ Haftungsausschluss
+Dies ist eine inoffizielle Anwendung und steht in keiner Verbindung zur Untis GmbH. Die Nutzung erfolgt auf eigene Gefahr. Der Entwickler haftet nicht für versäumten Unterricht oder Termine aufgrund technischer Fehler.
+
+---
+---
+
+<a name="-english"></a>
+## 🇬🇧 English
+
+An Android alarm clock app that wakes you up automatically based on your WebUntis schedule.
+
+### ✨ Features & Preview
 
 | Home Screen | Settings |
 | :---: | :---: |
@@ -22,8 +99,6 @@ An Android alarmclock app that wakes you up automatically based on your WebUntis
 
 ### Flexible Wake-up Modes
 
-Switch between a general preparation time or specific times for every lesson using the toggle in the top right.
-
 | Preparation (Early Minutes) | Individual Lesson Times |
 | :---: | :---: |
 | <img src="https://github.com/user-attachments/assets/4ffa48a7-5bc1-4774-8eb8-c27771d683d7" width="350"> | <img src="https://github.com/user-attachments/assets/a8ef6992-f1af-4014-a498-3fc24e379429" width="350"> |
@@ -31,78 +106,17 @@ Switch between a general preparation time or specific times for every lesson usi
 
 ---
 
-Copyright & License Notice
-
-Copyright (c) 2026 BrawlMasterX
-
-All Rights Reserved.
-
-This software and its source code are provided for educational and personal use only. Unauthorized copying, modification, distribution, or publication of this software, including but not limited to uploading the application to the Google Play Store or any other app distribution platform, is strictly prohibited without prior written permission from the author.
-
-Restrictions:
-
-* You may not sell this software or use it for commercial purposes.
-* You may not republish the source code or the application under your own name.
-* You are welcome to study the code and adapt it for private, non-commercial use only.
-
-For inquiries or permission requests, please contact me on github.
-
----
-
-## 🛠️ Tech Stack
+### 🛠️ Tech Stack
 * **Language:** Kotlin for App / Java for API
 * **Platform:** Android
-* **API Connection:** [WebUntisAPI by Keule0010](https://github.com/Keule0010/WebUntisAPI) I've edited
-  * ## Technical Modifications
-
-    I have made specific adjustments to the original WebUntisAPI to ensure compatibility with the Android environment:
-
-    * **JSON Parameter Fix:** Modified the `json` calls by removing the second `null` parameter. This was necessary because the standard Android JSON implementation only accepts a single parameter, and the extra null caused a signature mismatch.
-    * **Exception Handling:** Added explicit `Exception` handling and `throws` declarations to the core methods to ensure the app compiles correctly under Android's strict error-handling requirements.
+* **API Connection:** [WebUntisAPI by Keule0010](https://github.com/Keule0010/WebUntisAPI) (Modified)
 
 ---
 
-## 💡 Integrating Tasker with SleepWithUntis
-This app sends two different broadcast intents that Tasker can listen for. This allows you to automate your smart home or device settings perfectly synchronized with your school schedule.
-
-**Prerequisites**
-* Open Tasker.
-* Tap the three dots (top right) → Preferences.
-* Go to the Misc tab.
-* Enable "Allow External Access".
-
-**Available Triggers**
-* **Profile:** Tap + → Event → System → Intent Received
-* **Action:** com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE
-    * 5-minute lead-up
-* **Action:** com.sleepwithuntis.app.ACTION_ALARM_NOW
-    * Upon alarm trigger
-* **Task:** Create a task with actions to run exactly when the alarm goes off (roller shutters) or 5 minutes earlier (Lightalarm).
+### 📜 License Notice
+Copyright (c) 2026 BrawlMasterX. All Rights Reserved. For educational and personal use only.
 
 ---
 
-## 🙏 Credits & Third-Party Resources
-This app utilizes the following resources:
-
-* **API:** A huge thanks to [Keule0010](https://github.com/Keule0010) for providing the [WebUntisAPI](https://github.com/Keule0010/WebUntisAPI) (Licensed under the MIT License).
-* **Icons:** All icons were sourced from [SVG Repo](https://www.svgrepo.com/) and are used under the CC0 License:
-    * [Home Icon](https://www.svgrepo.com/svg/22031/home-icon-silhouette)
-    * [Go Back Icon](https://www.svgrepo.com/svg/376074/go-back)
-    * [Clock Icon](https://www.svgrepo.com/svg/535304/clock)
-* **Audio:** The `alarm_sound.mp3` is sourced from a royalty-free sound library.
-
----
-
-## Development Journey & Status
-This is my very first Android application. The project started using a Python-based API but was later migrated to the **WebUntisAPI (Kotlin)** to implement the school search feature.
-
-As this is a learning project:
-* **Current Status:** Technical Alpha / Proof of Concept.
-* **Development:** Built with a mix of manual coding, documentation research, and AI assistance.
-* **Design:** I've just made the things i've nedded like buttons. Then send all .xml files to gemini, which made this clean design.
-* **Known Issues:** Since I am still learning Kotlin and Android development, there might be redundant code or minor bugs. I am continuously working on cleaning up the codebase and optimizing performance.
-
----
-
-## ⚠️ Disclaimer
-This is an unofficial application and is not affiliated with, authorized, or endorsed by Untis GmbH. Use of this app is at your own risk. The developer is not responsible for any missed classes or appointments due to technical failures.
+### ⚠️ Disclaimer
+This is an unofficial application and is not affiliated with, authorized, or endorsed by Untis GmbH. Use at your own risk.
