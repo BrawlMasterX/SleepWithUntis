@@ -13,6 +13,8 @@
 
 Eine Android-Wecker-App, die dich automatisch basierend auf deinem WebUntis-Stundenplan weckt.
 
+---
+
 ### ✨ Funktionen & Vorschau
 
 | Startbildschirm | Einstellungen |
