@@ -4,7 +4,7 @@ An Android alarmclock app that wakes you up automatically based on your WebUntis
 
 ---
 
-## Features & Preview
+## ✨ Features & Preview
 
 | Home Screen | Settings |
 | :---: | :---: |
@@ -46,13 +46,6 @@ Restrictions:
 * You are welcome to study the code and adapt it for private, non-commercial use only.
 
 For inquiries or permission requests, please contact me on github.
-
----
-
-## ✨ Features
-* **Auto-Sync:** Synchronizes directly with the WebUntis timetable.
-* **Smart Alarm:** Calculates the wake-up time based on the first actual lesson of the day.
-* **Customizable:** Users can study the code and adapt it for private, non-commercial use (e.g., adding individual travel time buffers or day dependend wake up times).
 
 ---
 
