@@ -13,6 +13,8 @@
 
 An Android alarm clock app that wakes you up automatically based on your WebUntis schedule.
 
+---
+
 ### ✨ Features & Preview
 
 | Home Screen | Settings |
