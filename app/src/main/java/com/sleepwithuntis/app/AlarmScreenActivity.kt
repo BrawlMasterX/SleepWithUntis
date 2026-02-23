@@ -18,6 +18,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import android.net.Uri
+import android.view.KeyEvent
+import android.widget.Toast
+import android.content.IntentFilter
+import android.content.BroadcastReceiver
 
 class AlarmScreenActivity : AppCompatActivity() {
 
@@ -43,6 +47,8 @@ class AlarmScreenActivity : AppCompatActivity() {
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
         }
+        val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
+        registerReceiver(screenOffReceiver, filter)
 
         setContentView(R.layout.dialog_alarm_screen)
         triggerTaskerAlarm()
@@ -71,6 +77,13 @@ class AlarmScreenActivity : AppCompatActivity() {
 
         snoozeButton.setOnClickListener {
             snoozeAlarm()
+        }
+    }
+    private val screenOffReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Intent.ACTION_SCREEN_OFF) {
+                snoozeAlarm()
+            }
         }
     }
 
@@ -148,9 +161,13 @@ class AlarmScreenActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        try {
+            unregisterReceiver(screenOffReceiver)
+        } catch (e: Exception) {}
         stopAlarmSound()
         super.onDestroy()
     }
+
     private fun triggerTaskerAlarm() {
         Thread {
             try {
@@ -161,6 +178,16 @@ class AlarmScreenActivity : AppCompatActivity() {
                 applicationContext.sendBroadcast(intent)
             } catch (e: Exception) { e.printStackTrace() }
         }.start()
+    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_POWER -> {
+                Toast.makeText(this, "Alarm Snooze", Toast.LENGTH_SHORT).show()
+                snoozeAlarm()
+                true // Event als "verarbeitet" markieren
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
     }
 
     @Deprecated("Deprecated in Java")
