@@ -13,8 +13,6 @@
 
 An Android alarm clock app that wakes you up automatically based on your WebUntis schedule.
 
----
-
 ### ✨ Features & Preview
 
 | Home Screen | Settings |
@@ -64,16 +62,32 @@ This app sends two different broadcast intents that Tasker can listen for. This 
 
 **Available Triggers:**
 * **Profile:** Event → System → Intent Received
-* **Action:** `com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE` (5-minute lead-up, e.g., for light alarms)
-* **Action:** `com.sleepwithuntis.app.ACTION_ALARM_NOW` (Upon alarm trigger, e.g., for roller shutters)
+* **Action:** `com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE` (5-minute lead-up)
+* **Action:** `com.sleepwithuntis.app.ACTION_ALARM_NOW` (Upon alarm trigger)
 
 ---
 
-### 📜 Copyright & License
+### 🙏 Credits & Third-Party Resources
+* **API:** Huge thanks to [Keule0010](https://github.com/Keule0010) for the [WebUntisAPI](https://github.com/Keule0010/WebUntisAPI) (MIT License).
+* **Icons:** Sourced from [SVG Repo](https://www.svgrepo.com/) (CC0 License).
+* **Audio:** `alarm_sound.mp3` is sourced from a royalty-free sound library.
+
+---
+
+### 🚀 Development Journey & Status
+This is my very first Android application!
+* **Status:** Technical Alpha / Proof of Concept.
+* **Evolution:** Started with a Python API and migrated to Kotlin/Java for better integration.
+* **Design:** Created the functional elements (buttons/XML), which were then refined with AI assistance to achieve this clean look.
+* **Learning Process:** As a learning project, I am continuously working on cleaning up redundant code and optimizing performance.
+
+---
+
+### 📜 Copyright & License Notice
 Copyright (c) 2026 BrawlMasterX. All Rights Reserved.
-This software and its source code are provided for educational and personal use only. Unauthorized copying, modification, or publication of this software, including but not limited to uploading the application to the Google Play Store or any other app distribution platform, is strictly prohibited without prior written permission from the author.
+This software and its source code are provided for educational and personal use only. Unauthorized copying, modification, or publication, including uploading to the Google Play Store, is strictly prohibited without prior written permission.
 
 ---
 
 ### ⚠️ Disclaimer
-This is an unofficial application and is not affiliated with, authorized, or endorsed by Untis GmbH. Use of this app is at your own risk. The developer is not responsible for any missed classes or appointments due to technical failures.
+This is an unofficial application and is not affiliated with Untis GmbH. Use at your own risk. The developer is not responsible for any missed classes due to technical failures.
