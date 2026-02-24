@@ -22,6 +22,19 @@ import android.view.KeyEvent
 import android.widget.Toast
 import android.content.IntentFilter
 import android.content.BroadcastReceiver
+import android.content.pm.PackageManager
+import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.NotificationChannel
+import androidx.core.app.NotificationCompat
 
 class AlarmScreenActivity : AppCompatActivity() {
 
@@ -179,6 +192,103 @@ class AlarmScreenActivity : AppCompatActivity() {
             } catch (e: Exception) { e.printStackTrace() }
         }.start()
     }
+
+    private fun checkForAppUpdates() {
+        val currentVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0)).versionName
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getPackageInfo(packageName, 0).versionName
+        } ?: "1.0.0"
+        val url = "https://api.github.com/repos/BrawlMasterX/SleepWithUntis/releases/latest"
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // In der lifecycleScope.launch(Dispatchers.IO) Schleife:
+
+                val client = OkHttpClient()
+                val request = Request.Builder()
+                    .url(url)
+                    .header("User-Agent", "SleepWithUntis-App") // WICHTIG: GitHub braucht das!
+                    .header("Accept", "application/vnd.github.v3+json")
+                    .build()
+
+                val response = client.newCall(request).execute()
+
+                if (response.isSuccessful) {
+                    val jsonData = response.body?.string()
+                    if (jsonData != null) {
+                        val jsonObject = JSONObject(jsonData)
+                        val latestVersion = jsonObject.getString("tag_name").replace("v", "") // Entfernt 'v' falls vorhanden
+                        val downloadUrl = jsonObject.getString("html_url")
+
+                        if (isNewerVersion(currentVersion, latestVersion)) {
+                            withContext(Dispatchers.Main) {
+                                sendUpdateNotification(latestVersion, downloadUrl)
+                            }
+                        }
+                    }
+                } else {
+                    // Logge den Fehler, falls die API z.B. 404 oder 403 zurückgibt
+                    println("GitHub API Error: ${response.code}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace() // Fehler beim Check (z.B. kein Internet) einfach ignorieren
+            }
+        }
+    }
+
+    private fun isNewerVersion(current: String, latest: String): Boolean {
+        // Entferne 'v' Präfixe und splitte bei den Punkten (z.B. "1.2.3" -> ["1", "2", "3"])
+        val curParts = current.replace("v", "").split(".").map { it.toIntOrNull() ?: 0 }
+        val latParts = latest.replace("v", "").split(".").map { it.toIntOrNull() ?: 0 }
+
+        // Ermittle die Länge der längsten Versionsnummer
+        val maxLength = maxOf(curParts.size, latParts.size)
+
+        for (i in 0 until maxLength) {
+            val c = curParts.getOrElse(i) { 0 } // Falls Teil fehlt (z.B. bei "1.2"), nimm 0
+            val l = latParts.getOrElse(i) { 0 }
+
+            if (l > c) return true  // GitHub Version ist an dieser Stelle höher -> Update!
+            if (c > l) return false // Lokale Version ist höher (Entwickler-Modus) -> Kein Update
+        }
+
+        return false // Versionen sind exakt gleich
+    }
+    private fun sendUpdateNotification(version: String, downloadUrl: String) {
+        val channelId = "update_notifications"
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "App Updates",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl))
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(android.R.drawable.stat_sys_download_done) // Standard Download-Icon
+            .setContentTitle("Update verfügbar!")
+            .setContentText("Version $version ist da. Tippe zum Herunterladen von GitHub.")
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent) // Öffnet den Link
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        notificationManager.notify(1, notification)
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_POWER -> {

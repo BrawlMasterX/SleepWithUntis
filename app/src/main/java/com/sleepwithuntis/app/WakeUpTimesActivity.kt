@@ -57,6 +57,7 @@ class WakeUpTimesActivity : AppCompatActivity() {
             toggleUI(isChecked)
             // Auch beim Umschalten speichern wir den Modus sofort
             pref.edit().putBoolean("use_absolute_time", isChecked).apply()
+            saveEverything()
         }
 
         // Minuten laden
@@ -75,6 +76,7 @@ class WakeUpTimesActivity : AppCompatActivity() {
 
                     TimePickerDialog(this, R.style.OrangeTimePickerTheme, { _, selH, selM ->
                         tv.text = String.format("%02d:%02d", selH, selM)
+                        saveEverything()
                     }, h, m, true).show()
                 }
                 timeViews.add(tv)
@@ -103,4 +105,11 @@ class WakeUpTimesActivity : AppCompatActivity() {
         saveEverything() // Speichert auch beim System-Zurück-Button
         super.onBackPressed()
     }
+
+    // Lebenszyklus-Methoden für maximale Sicherheit
+    override fun onPause() {
+        super.onPause()
+        saveEverything() // Speichert, wenn die App in den Hintergrund geht oder geschlossen wird
+    }
+
 }
