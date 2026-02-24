@@ -18,7 +18,6 @@ import android.graphics.Color
 import android.content.Intent
 import android.widget.Button
 import android.widget.Toast
-import webuntisjava.UntisClient
 
 class UserLoginActivity : AppCompatActivity() {
 

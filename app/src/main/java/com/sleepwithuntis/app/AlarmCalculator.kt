@@ -1,3 +1,5 @@
+package com.sleepwithuntis.app
+
 import android.content.Context
 import webuntisjava.UntisClient
 import java.time.LocalDate

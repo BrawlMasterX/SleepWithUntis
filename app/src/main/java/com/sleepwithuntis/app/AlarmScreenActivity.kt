@@ -23,7 +23,6 @@ import android.widget.Toast
 import android.content.IntentFilter
 import android.content.BroadcastReceiver
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

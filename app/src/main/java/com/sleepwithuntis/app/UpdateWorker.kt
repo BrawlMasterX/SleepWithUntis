@@ -1,11 +1,8 @@
 package com.sleepwithuntis.app
 
-import AlarmCalculator
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import java.net.HttpURLConnection
-import java.net.URL
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.util.Calendar

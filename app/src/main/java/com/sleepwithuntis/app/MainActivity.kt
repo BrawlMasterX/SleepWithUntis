@@ -4,15 +4,18 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.Settings
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.work.Data
@@ -22,20 +25,17 @@ import androidx.work.WorkManager
 import com.google.android.material.switchmaterial.SwitchMaterial
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import AlarmCalculator
-import java.time.LocalDate
-import java.util.*
-import java.util.concurrent.TimeUnit
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import android.os.PowerManager
 import kotlinx.coroutines.runBlocking
-import androidx.appcompat.app.AlertDialog
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import android.content.pm.PackageManager
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
