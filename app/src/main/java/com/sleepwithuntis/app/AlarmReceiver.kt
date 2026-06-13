@@ -35,20 +35,26 @@ class AlarmReceiver : BroadcastReceiver() {
         val action = intent?.action
         val pref = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
 
+        LogManager.log(context, "AlarmReceiver empfangen: $action")
+
         // Alarme nach Neustart wiederherstellen
         if (action == Intent.ACTION_BOOT_COMPLETED) {
+            LogManager.log(context, "Geräteneustart erkannt, plane Scans neu.")
             scheduleScanFromPrefs(context)
             return
         }
 
         // Sicherheitscheck: Nur weitermachen, wenn der Wecker aktiv ist
-        if (!pref.getBoolean("alarm_active", false)) return
+        if (!pref.getBoolean("alarm_active", false)) {
+            LogManager.log(context, "Alarm ist inaktiv, ignoriere Broadcast.")
+            return
+        }
 
         when (action) {
             ACTION_UPDATE_UNTIS -> {
-                // Den UpdateWorker für den 5-Minuten-Vergleich starten
+                LogManager.log(context, "Starte Update-Check vor dem Wecken...")
                 val data = Data.Builder()
-                    .putBoolean("is_initial_scan", false) // Kein 0-Uhr Scan, sondern der Check vor dem Wecken
+                    .putBoolean("is_initial_scan", false)
                     .build()
 
                 val updateRequest = OneTimeWorkRequestBuilder<UpdateWorker>()
@@ -59,14 +65,17 @@ class AlarmReceiver : BroadcastReceiver() {
             }
 
             ACTION_TRIGGER_ALARM -> {
-                // Nur wenn es KEIN Snooze ist, setzen wir die Flag auf true
+                LogManager.log(context, "Wecker wird jetzt ausgelöst!")
                 triggerAlarm(context)
             }
             ACTION_SLEEP_REMINDER -> {
+                LogManager.log(context, "Schlaf-Erinnerung wird geprüft.")
                 val powerManager = context.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
-                // PRÜFUNG: Ist der Bildschirm an?
                 if (powerManager.isInteractive) {
+                    LogManager.log(context, "Bildschirm ist an, zeige Erinnerung.")
                     showSleepNotification(context)
+                } else {
+                    LogManager.log(context, "Bildschirm aus, keine Erinnerung nötig.")
                 }
             }
         }
@@ -77,7 +86,10 @@ class AlarmReceiver : BroadcastReceiver() {
         val h = pref.getInt("current_hour", -1)
         val m = pref.getInt("current_minute", -1)
 
-        if (h == -1) return // Kein Alarm gesetzt
+        if (h == -1) {
+            LogManager.log(context, "Kein gültiger Alarm in Prefs gefunden zum Planen.")
+            return
+        }
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -86,13 +98,14 @@ class AlarmReceiver : BroadcastReceiver() {
             set(Calendar.MINUTE, m)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            add(Calendar.MINUTE, -5) // Genau 5 Minuten vor der Weckzeit scannen
+            add(Calendar.MINUTE, -5) 
         }
 
-        // Falls die Zeit für heute schon vorbei ist -> Plan für morgen
         if (calendar.before(Calendar.getInstance())) {
             calendar.add(Calendar.DATE, 1)
         }
+
+        LogManager.log(context, "Plane 5-Minuten-Scan für: ${calendar.time}")
 
         val intent = Intent(context, AlarmReceiver::class.java).apply { action = ACTION_UPDATE_UNTIS }
         val pendingIntent = PendingIntent.getBroadcast(
@@ -105,9 +118,8 @@ class AlarmReceiver : BroadcastReceiver() {
         setExactAlarm(alarmManager, calendar.timeInMillis, pendingIntent)
     }
 
-
-    // Füge isSnooze als Parameter hinzu (Standardwert ist false)
     fun scheduleFinalAlarm(context: Context, minutesFromNow: Int, isSnooze: Boolean = false) {
+        LogManager.log(context, "Plane finalen Wecker in $minutesFromNow Minuten (Snooze: $isSnooze)")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val calendar = Calendar.getInstance().apply {
             add(Calendar.MINUTE, minutesFromNow)
@@ -115,7 +127,6 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             action = ACTION_TRIGGER_ALARM
-            // Hier geben wir die Info mit, ob es ein Snooze ist
             putExtra("is_snooze", isSnooze)
         }
 
@@ -137,21 +148,21 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun triggerAlarm(context: Context) { {
+    private fun triggerAlarm(context: Context) {
+        LogManager.log(context, "Starte AlarmScreenActivity...")
         context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE).edit().apply {
-            putBoolean("last_set_time",true )
-                apply()
-            }
+            putBoolean("last_set_time", true)
+            apply()
         }
+        
         val fullScreenIntent = Intent(context, AlarmScreenActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
 
-        // Wenn Overlay-Rechte da sind -> Activity sofort öffnen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Settings.canDrawOverlays(context)) {
             context.startActivity(fullScreenIntent)
         } else {
-            // Fallback: Benachrichtigung mit FullScreenIntent
+            LogManager.log(context, "Keine Overlay-Berechtigung, nutze Notification-Fallback.")
             createNotificationChannel(context)
             val pending = PendingIntent.getActivity(
                 context,
@@ -174,10 +185,11 @@ class AlarmReceiver : BroadcastReceiver() {
             nm.notify(ALARM_NOTIFICATION_ID, notification)
         }
     }
+
     @SuppressLint("ServiceCast")
     private fun showSleepNotification(context: Context) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        createNotificationChannel(context) // Nutzt deine vorhandene Channel-Funktion
+        createNotificationChannel(context)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_power_off)
@@ -190,7 +202,6 @@ class AlarmReceiver : BroadcastReceiver() {
         nm.notify(SLEEP_NOTIFICATION_ID, notification)
     }
 
-
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -198,7 +209,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 "Wecker Channel",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                setSound(null, null) // Ton kommt von der Activity
+                setSound(null, null)
             }
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             nm.createNotificationChannel(channel)

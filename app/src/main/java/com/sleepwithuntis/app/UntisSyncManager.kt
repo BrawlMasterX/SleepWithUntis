@@ -9,16 +9,25 @@ class UntisSyncManager(private val context: Context) {
 
     suspend fun syncNow(): Boolean = withContext(Dispatchers.IO) {
         try {
+            LogManager.log(context, "UntisSyncManager: Starte Synchronisierung...")
             val pref = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
             val server = pref.getString("server", "") ?: ""
             val school = pref.getString("school", "") ?: ""
             val user = pref.getString("username", "") ?: ""
             val pass = pref.getString("password", "") ?: ""
 
-            if (server.isEmpty() || user.isEmpty()) return@withContext false
+            if (server.isEmpty() || user.isEmpty()) {
+                LogManager.log(context, "UntisSyncManager Fehler: Login-Daten unvollständig.")
+                return@withContext false
+            }
 
             val client = UntisClient(user, pass, school, server)
-            if (!client.login()) return@withContext false
+            if (!client.login()) {
+                LogManager.log(context, "UntisSyncManager Fehler: Login fehlgeschlagen (Check credentials/server).")
+                return@withContext false
+            }
+
+            LogManager.log(context, "UntisSyncManager: Login erfolgreich. Rufe Daten ab...")
 
             // Daten abrufen
             val times = client.getWeekTimes()
@@ -30,8 +39,10 @@ class UntisSyncManager(private val context: Context) {
             saveSettingsTime(times)
             saveSettingsLessons(lessons)
 
+            LogManager.log(context, "UntisSyncManager: Synchronisierung erfolgreich abgeschlossen.")
             true
         } catch (e: Exception) {
+            LogManager.log(context, "UntisSyncManager KRITISCHER FEHLER: ${e.message}")
             e.printStackTrace()
             false
         }
@@ -47,12 +58,12 @@ class UntisSyncManager(private val context: Context) {
             putString("wake_up_time_freitag", map["freitag"] ?: "08:00")
             apply()
         }
+        LogManager.log(context, "UntisSyncManager: Weckzeiten gespeichert.")
     }
 
     private fun saveSettingsLessons(map: Map<String, Int>) {
         val pref = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
         with(pref.edit()) {
-            // Wir wandeln den Wert sicher in einen Int um (Standardwert 1)
             putInt("wake_up_lesson_montag", (map["montag"] as? Number)?.toInt() ?: -1)
             putInt("wake_up_lesson_dienstag", (map["dienstag"] as? Number)?.toInt() ?: -1)
             putInt("wake_up_lesson_mittwoch", (map["mittwoch"] as? Number)?.toInt() ?: -1)
@@ -60,5 +71,6 @@ class UntisSyncManager(private val context: Context) {
             putInt("wake_up_lesson_freitag", (map["freitag"] as? Number)?.toInt() ?: -1)
             apply()
         }
+        LogManager.log(context, "UntisSyncManager: Unterrichtsstunden gespeichert.")
     }
 }
