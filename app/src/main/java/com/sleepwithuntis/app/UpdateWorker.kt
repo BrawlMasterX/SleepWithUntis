@@ -23,9 +23,17 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         val alarmPref = applicationContext.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
         val isInitialScan = inputData.getBoolean("is_initial_scan", false)
 
+        LogManager.log(applicationContext, "--- UpdateWorker gestartet (InitialScan: $isInitialScan) ---")
+
         if (isInitialScan) {
             runBlocking {
-                UntisSyncManager(applicationContext).syncNow()
+                try {
+                    LogManager.log(applicationContext, "Starte UntisSync...")
+                    UntisSyncManager(applicationContext).syncNow()
+                    LogManager.log(applicationContext, "Sync erfolgreich beendet.")
+                } catch (e: Exception) {
+                    LogManager.log(applicationContext, "Fehler beim Sync: ${e.message}")
+                }
             }
         }
 
@@ -63,6 +71,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 val targetMin = alarmTime?.get(1) ?: -1
                 val isForTomorrow = targetDate.isAfter(heute)
 
+                LogManager.log(applicationContext, "Nächster Alarm gefunden: $targetHour:$targetMin am $targetDate")
                 saveCurrentAlarm(targetHour, targetMin, isForTomorrow)
                 
                 if (targetHour != -1) {
@@ -71,13 +80,13 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 }
             } else {
                 // 5-Minuten Check vor dem Wecken
-                // Wir scannen IMMER den aktuellen Tag (heute), da wir ja gerade geweckt werden wollen
+                LogManager.log(applicationContext, "5-Minuten Check läuft...")
                 val targetTime = calculator.getAlarmTime(heute)
                 val targetHour = targetTime?.get(0) ?: -1
                 val targetMin = targetTime?.get(1) ?: -1
 
                 if (targetHour == -1) {
-                    // Falls heute doch kein Unterricht ist (kurzfristige Änderung)
+                    LogManager.log(applicationContext, "Unterricht heute ausgefallen.")
                     saveCurrentAlarm(-1, -1, false)
                     return Result.success()
                 }
@@ -85,6 +94,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 val alteH = alarmPref.getInt("current_hour", -1)
                 val alteM = alarmPref.getInt("current_minute", -1)
                 
+                LogManager.log(applicationContext, "Check: Alt=$alteH:$alteM, Neu=$targetHour:$targetMin")
+
                 val nowCal = Calendar.getInstance()
                 val newWakeCal = Calendar.getInstance().apply {
                     set(Calendar.HOUR_OF_DAY, targetHour)
@@ -93,14 +104,15 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 }
 
                 if (targetHour == alteH && targetMin == alteM) {
+                    LogManager.log(applicationContext, "Zeit unverändert -> Wecker wird ausgelöst.")
                     triggerTaskerBefore()
                     AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
                 } else if (newWakeCal.before(nowCal)) {
-                    // Neue Weckzeit liegt in der Vergangenheit -> Sofort wecken
+                    LogManager.log(applicationContext, "Neue Zeit liegt in der Vergangenheit -> Sofort wecken.")
                     saveCurrentAlarm(targetHour, targetMin, false)
                     AlarmReceiver().scheduleFinalAlarm(applicationContext, 0)
                 } else {
-                    // Weckzeit hat sich nach hinten verschoben
+                    LogManager.log(applicationContext, "Zeit hat sich verschoben -> Neuer Scan geplant.")
                     saveCurrentAlarm(targetHour, targetMin, false)
                     AlarmReceiver().scheduleScanFromPrefs(applicationContext)
                 }
@@ -109,8 +121,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             return Result.success()
 
         } catch (e: Exception) {
+            LogManager.log(applicationContext, "KRITISCHER FEHLER in UpdateWorker: ${e.message}\n${e.stackTraceToString()}")
             if (!isInitialScan) {
-                // Im Fehlerfall trotzdem wecken (Sicherheit geht vor)
+                LogManager.log(applicationContext, "Notfall-Weckruf wird ausgelöst.")
                 triggerTaskerBefore()
                 AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
             }
@@ -128,6 +141,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         }
 
         if (calendar.before(Calendar.getInstance())) return
+
+        LogManager.log(applicationContext, "Schlaf-Erinnerung für ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)} geplant.")
 
         val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
             action = AlarmReceiver.ACTION_SLEEP_REMINDER
@@ -153,13 +168,16 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
     }
 
     private fun triggerTaskerBefore() {
+        LogManager.log(applicationContext, "Sende Broadcast an Tasker...")
         Thread {
             try {
                 val intent = Intent("com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE").apply {
                     setPackage("net.dinglisch.android.taskerm")
                 }
                 applicationContext.sendBroadcast(intent)
-            } catch (e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) { 
+                LogManager.log(applicationContext, "Fehler beim Tasker-Broadcast: ${e.message}")
+            }
         }.start()
     }
 }
