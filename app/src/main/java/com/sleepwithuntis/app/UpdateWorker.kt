@@ -3,7 +3,6 @@ package com.sleepwithuntis.app
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Calendar
@@ -11,11 +10,7 @@ import kotlinx.coroutines.runBlocking
 import android.content.Intent
 import android.app.PendingIntent
 import androidx.work.Data
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import java.util.concurrent.TimeUnit
-
 
 class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
 
@@ -39,96 +34,118 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
         try {
             val calculator = AlarmCalculator(applicationContext)
-            val jetzt = LocalTime.now()
             val heute = LocalDate.now()
 
             if (isInitialScan) {
-                // Bestimme das Zieldatum für den nächsten Schultag
-                var targetDate = heute
-                var alarmTime = calculator.getAlarmTime(heute)
-
-                // Wann ist der heutige Schultag "vorbei"?
-                val schoolStartHeute = if (alarmTime != null && alarmTime[0] != -1) {
-                    LocalTime.of(alarmTime[0], alarmTime[1])
-                } else {
-                    LocalTime.of(10, 0)
-                }
-
-                if (jetzt.isAfter(schoolStartHeute)) {
-                    targetDate = heute.plusDays(1)
-                    alarmTime = calculator.getAlarmTime(targetDate)
-                }
-
-                // Nächsten Schultag suchen (max 7 Tage)
-                var searchCount = 0
-                while ((alarmTime == null || alarmTime[0] == -1) && searchCount < 7) {
-                    targetDate = targetDate.plusDays(1)
-                    alarmTime = calculator.getAlarmTime(targetDate)
-                    searchCount++
-                }
-
-                val targetHour = alarmTime?.get(0) ?: -1
-                val targetMin = alarmTime?.get(1) ?: -1
-                val isForTomorrow = targetDate.isAfter(heute)
-
-                LogManager.log(applicationContext, "Nächster Alarm gefunden: $targetHour:$targetMin am $targetDate")
-                saveCurrentAlarm(targetHour, targetMin, isForTomorrow)
-                
-                if (targetHour != -1) {
-                    scheduleSleepReminder(targetHour, targetMin)
-                    AlarmReceiver().scheduleScanFromPrefs(applicationContext)
-                }
+                findNextSchoolDay(calculator, heute)
             } else {
-                // 5-Minuten Check vor dem Wecken
                 LogManager.log(applicationContext, "5-Minuten Check läuft...")
-                val targetTime = calculator.getAlarmTime(heute)
+                val jetzt = LocalTime.now()
+                // Ignoriere Stunden, die bereits mehr als 30 Min in der Vergangenheit liegen
+                val targetTime = calculator.getAlarmTime(heute, jetzt.minusMinutes(30))
                 val targetHour = targetTime?.get(0) ?: -1
                 val targetMin = targetTime?.get(1) ?: -1
 
                 if (targetHour == -1) {
-                    LogManager.log(applicationContext, "Unterricht heute ausgefallen.")
-                    saveCurrentAlarm(-1, -1, false)
+                    LogManager.log(applicationContext, "Heute kein Unterricht mehr. Suche nächsten Schultag...")
+                    findNextSchoolDay(calculator, heute.plusDays(1))
                     return Result.success()
                 }
 
                 val alteH = alarmPref.getInt("current_hour", -1)
                 val alteM = alarmPref.getInt("current_minute", -1)
-                
+
                 LogManager.log(applicationContext, "Check: Alt=$alteH:$alteM, Neu=$targetHour:$targetMin")
 
-                val nowCal = Calendar.getInstance()
-                val newWakeCal = Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, targetHour)
-                    set(Calendar.MINUTE, targetMin)
-                    set(Calendar.SECOND, 0)
-                }
+                val newWakeTime = LocalTime.of(targetHour, targetMin)
 
                 if (targetHour == alteH && targetMin == alteM) {
                     LogManager.log(applicationContext, "Zeit unverändert -> Wecker wird ausgelöst.")
                     triggerTaskerBefore()
                     AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
-                } else if (newWakeCal.before(nowCal)) {
-                    LogManager.log(applicationContext, "Neue Zeit liegt in der Vergangenheit -> Sofort wecken.")
-                    saveCurrentAlarm(targetHour, targetMin, false)
-                    AlarmReceiver().scheduleFinalAlarm(applicationContext, 0)
+                } else if (newWakeTime.isBefore(jetzt)) {
+                    // Sicherheitscheck: Nur sofort wecken, wenn die Zeit erst vor kurzem war (max 30 Min)
+                    if (java.time.Duration.between(newWakeTime, jetzt).toMinutes() < 30) {
+                        LogManager.log(applicationContext, "Neue Zeit liegt kurz in der Vergangenheit -> Sofort wecken.")
+                        saveCurrentAlarm(targetHour, targetMin, false)
+                        AlarmReceiver().scheduleFinalAlarm(applicationContext, 0)
+                    } else {
+                        LogManager.log(applicationContext, "Neue Zeit liegt zu weit in der Vergangenheit ($newWakeTime). Suche nächsten Tag.")
+                        findNextSchoolDay(calculator, heute.plusDays(1))
+                    }
                 } else {
                     LogManager.log(applicationContext, "Zeit hat sich verschoben -> Neuer Scan geplant.")
                     saveCurrentAlarm(targetHour, targetMin, false)
                     AlarmReceiver().scheduleScanFromPrefs(applicationContext)
                 }
             }
-
             return Result.success()
 
         } catch (e: Exception) {
-            LogManager.log(applicationContext, "KRITISCHER FEHLER in UpdateWorker: ${e.message}\n${e.stackTraceToString()}")
+            LogManager.log(applicationContext, "KRITISCHER FEHLER: ${e.message}")
             if (!isInitialScan) {
-                LogManager.log(applicationContext, "Notfall-Weckruf wird ausgelöst.")
-                triggerTaskerBefore()
                 AlarmReceiver().scheduleFinalAlarm(applicationContext, 5)
             }
             return Result.failure()
         }
+    }
+
+    private fun findNextSchoolDay(calculator: AlarmCalculator, startDate: LocalDate) {
+        var targetDate = startDate
+        val jetzt = LocalTime.now()
+
+        // Erste Prüfung für den Start-Tag
+        var alarmTime = calculator.getAlarmTime(targetDate)
+
+        // Falls wir "heute" suchen, aber der Weckzeitpunkt heute schon vorbei ist -> ab morgen suchen
+        if (targetDate == LocalDate.now() && alarmTime != null && alarmTime[0] != -1) {
+            val schoolStart = LocalTime.of(alarmTime[0], alarmTime[1])
+            if (jetzt.isAfter(schoolStart)) {
+                LogManager.log(applicationContext, "Weckzeit für heute ($schoolStart) bereits vorbei. Suche ab morgen.")
+                targetDate = targetDate.plusDays(1)
+                alarmTime = calculator.getAlarmTime(targetDate)
+            }
+        }
+
+        // Suche bis zu 7 Tage in die Zukunft
+        var searchCount = 0
+        while ((alarmTime == null || alarmTime[0] == -1) && searchCount < 7) {
+            targetDate = targetDate.plusDays(1)
+            alarmTime = calculator.getAlarmTime(targetDate)
+            searchCount++
+        }
+
+        val targetHour = alarmTime?.get(0) ?: -1
+        val targetMin = alarmTime?.get(1) ?: -1
+        val isForTomorrow = targetDate.isAfter(LocalDate.now())
+
+        if (targetHour != -1) {
+            LogManager.log(applicationContext, "Nächster Alarm gefunden: $targetHour:$targetMin am $targetDate")
+            saveCurrentAlarm(targetHour, targetMin, isForTomorrow)
+            scheduleSleepReminder(targetHour, targetMin)
+            AlarmReceiver().scheduleScanFromPrefs(applicationContext)
+        } else {
+            LogManager.log(applicationContext, "Kein Unterricht in Sicht. Plane Sicherheits-Scan für morgen.")
+            saveCurrentAlarm(-1, -1, false)
+            scheduleBackupScan()
+        }
+    }
+
+    private fun scheduleBackupScan() {
+        val calendar = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_YEAR, 1)
+            set(Calendar.HOUR_OF_DAY, 8) // Backup-Scan jeden Morgen um 8
+            set(Calendar.MINUTE, 0)
+        }
+        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
+            action = AlarmReceiver.ACTION_UPDATE_UNTIS
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext, 300, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val am = applicationContext.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 
     private fun scheduleSleepReminder(h: Int, m: Int) {
@@ -139,22 +156,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             set(Calendar.SECOND, 0)
             add(Calendar.HOUR_OF_DAY, -8)
         }
-
         if (calendar.before(Calendar.getInstance())) return
-
-        LogManager.log(applicationContext, "Schlaf-Erinnerung für ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)} geplant.")
-
-        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
-            action = AlarmReceiver.ACTION_SLEEP_REMINDER
-        }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            applicationContext,
-            300,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
+        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply { action = AlarmReceiver.ACTION_SLEEP_REMINDER }
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 300, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         alarmManager.set(android.app.AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
     }
 
@@ -168,16 +172,11 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
     }
 
     private fun triggerTaskerBefore() {
-        LogManager.log(applicationContext, "Sende Broadcast an Tasker...")
         Thread {
             try {
-                val intent = Intent("com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE").apply {
-                    setPackage("net.dinglisch.android.taskerm")
-                }
+                val intent = Intent("com.sleepwithuntis.app.ACTION_ALARM_5_MINUTE").setPackage("net.dinglisch.android.taskerm")
                 applicationContext.sendBroadcast(intent)
-            } catch (e: Exception) { 
-                LogManager.log(applicationContext, "Fehler beim Tasker-Broadcast: ${e.message}")
-            }
+            } catch (e: Exception) { }
         }.start()
     }
 }

@@ -12,6 +12,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.Calendar
@@ -28,6 +29,8 @@ class AlarmReceiver : BroadcastReceiver() {
         const val ACTION_TRIGGER_ALARM = "com.sleepwithuntis.ACTION_TRIGGER_ALARM"
         const val ACTION_SLEEP_REMINDER = "com.sleepwithuntis.ACTION_SLEEP_REMINDER"
         const val SLEEP_NOTIFICATION_ID = 3
+        
+        const val WORK_NAME_UPDATE = "UpdateUntisWork"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -61,7 +64,12 @@ class AlarmReceiver : BroadcastReceiver() {
                     .setInputData(data)
                     .build()
 
-                WorkManager.getInstance(context).enqueue(updateRequest)
+                // Nutze enqueueUniqueWork, um Mehrfachstarts zu verhindern
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    WORK_NAME_UPDATE,
+                    ExistingWorkPolicy.REPLACE,
+                    updateRequest
+                )
             }
 
             ACTION_TRIGGER_ALARM -> {
@@ -85,6 +93,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val pref = context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE)
         val h = pref.getInt("current_hour", -1)
         val m = pref.getInt("current_minute", -1)
+        val isForTomorrow = pref.getBoolean("last_set_time", false)
 
         if (h == -1) {
             LogManager.log(context, "Kein gültiger Alarm in Prefs gefunden zum Planen.")
@@ -99,9 +108,15 @@ class AlarmReceiver : BroadcastReceiver() {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
             add(Calendar.MINUTE, -5) 
+            
+            if (isForTomorrow) {
+                add(Calendar.DATE, 1)
+            }
         }
 
+        // Falls die Zeit TROTZ isForTomorrow in der Vergangenheit liegt (z.B. Scan war für 08:00 heute, es ist aber schon 08:05)
         if (calendar.before(Calendar.getInstance())) {
+            LogManager.log(context, "Geplante Scan-Zeit ${calendar.time} liegt in der Vergangenheit. Korrigiere...")
             calendar.add(Calendar.DATE, 1)
         }
 
@@ -150,6 +165,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun triggerAlarm(context: Context) {
         LogManager.log(context, "Starte AlarmScreenActivity...")
+        
+        // Verhindert, dass der Wecker direkt wieder als "für morgen" geplant wird, 
+        // falls er gerade erst geklingelt hat.
         context.getSharedPreferences("alarm_prefs", Context.MODE_PRIVATE).edit().apply {
             putBoolean("last_set_time", true)
             apply()
